@@ -1,0 +1,156 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", Arial, sans-serif;
+  background: #f6f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 60px 20px;
+  color: #1f1f1f;
+}
+
+.container {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+h1 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.todo-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+#input::placeholder {
+  color: #9ca3af;
+}
+
+#input:focus {
+  border-color: #7c5cff;
+  background: #fff;
+}
+
+.btn-add {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  background: #7c5cff;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-add:hover {
+  background: #6a4de0;
+}
+
+.btnFilterBox {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btnFilterBox button {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #f1f2f6;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnFilterBox button:hover {
+  background: #e7e9f2;
+}
+
+.btnFilterBox button.active {
+  background: #7c5cff;
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(124, 92, 255, 0.3);
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-item {
+  background: #f9fafb;
+  padding: 14px 16px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.task-item:hover {
+  background: #f1f3f9;
+}
+
+.task-item strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.task-item.done {
+  background: #ecebff;
+}
+
+.task-item.done strong {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.delete-btn {
+  margin-left: 10px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #c4c4c4;
+  cursor: pointer;
+  transition: 0.2s;
+  opacity: 0;
+  transform: translateX(5px);
+}
+
+.delete-btn:hover {
+  color: #ff4d4f;
+}
+
+.task-item:hover .delete-btn {
+  opacity: 1;
+  transform: translateX(0);
+}
