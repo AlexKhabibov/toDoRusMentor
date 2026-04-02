@@ -27,7 +27,7 @@ function saveTodos() {
 }
 
 
-// Добавление таски
+// Добавление и сохранение таски
 form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -41,8 +41,9 @@ form.addEventListener('submit', function (e) {
     };
 
     todos.push(newTodo);
-
     input.value = '';
+
+    saveTodos();
     render();
 });
 
@@ -72,7 +73,6 @@ function render() {
     });
 
     updateButtons();
-    saveTodos();
 }
 
 
