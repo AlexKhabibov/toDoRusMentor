@@ -11,7 +11,7 @@ window.addEventListener('load', () => {
 
 const STORAGE_KEY = 'todos-app'; // ключ для отдельного списока
 let todos = loadTodos(); // список задач
-let currentFilter = "all"; // all | active | done
+let currentFilter = "all"; // all | active | done - для статистики по кол-ву задач и тогггла для кнопки "Все задачи/Надо выполнить"
 
 
 render(); // при старте сразу показываем ui
@@ -72,7 +72,7 @@ function render() {
         list.appendChild(li);
     });
 
-    updateButtons();
+    updateButtons(); // обновляем кол-во задач в счетчиках внутри кнопок
 }
 
 
@@ -96,7 +96,7 @@ list.addEventListener('click', function (e) {
 });
 
 
-// фильрация списка кнопками
+// фильтрация списка кнопками
 showAllTasksBtn.addEventListener('click', function () {
     if (currentFilter === 'all') {
         currentFilter = 'active';
@@ -124,8 +124,7 @@ function getFilteredTodos() {
     return todos;
 }
 
-
-// получнеие статы
+// получнеие общей статы по кол-ву задач
 function getStats() {
     const total = todos.length;
     const done = todos.filter(t => t.completed).length;
