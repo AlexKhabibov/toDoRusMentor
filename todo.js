@@ -54,6 +54,8 @@ function render() {
 
     const filtered = getFilteredTodos();
 
+    const fragment = document.createDocumentFragment(); // хоть и излишне, но ради интереса буду использовать фрагмент (для оптимизации производительности)
+
     filtered.forEach(todo => {
         const li = document.createElement('li');
         li.classList.add('task-item');
@@ -80,14 +82,15 @@ function render() {
 
         li.append(strong, button);
 
-        list.appendChild(li);
+        fragment.appendChild(li); // кладем снаала в фрагмент
     });
+    list.appendChild(fragment); // а потом из ффрагмента за один раз в список
 
     updateButtons(); // обновляем кол-во задач в счетчиках внутри кнопок
 }
 
 
-// CLICK (delete / toggle)
+// удаление тасок
 list.addEventListener('click', function (e) {
     const li = e.target.closest('li');
     if (!li) return;
@@ -98,12 +101,20 @@ list.addEventListener('click', function (e) {
 
     if (e.target.classList.contains('delete-btn')) {
         todos = todos.filter(t => t.id !== id);
-        render();
+        saveTodos();
+
+        li.remove();
+
+        updateButtons();
         return;
     }
 
     todo.completed = !todo.completed;
-    render();
+    saveTodos();
+
+    li.classList.toggle('done');
+
+    updateButtons();
 });
 
 
