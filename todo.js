@@ -64,10 +64,21 @@ function render() {
             li.classList.add('done');
         }
 
-        li.innerHTML = `
-            <strong>${todo.text}</strong>
-            <button class="delete-btn">Удалить</button>
-        `;
+        // так нельзя -> привет от прививки))))
+        // li.innerHTML = `
+        //     <strong>${todo.text}</strong>
+        //     <button class="delete-btn">Удалить</button>
+        // `; 
+
+        // безопаснее создать так:
+        const strong = document.createElement('strong');
+        strong.textContent = todo.text;
+
+        const button = document.createElement('button');
+        button.classList.add('delete-btn');
+        button.textContent = 'Удалить';
+
+        li.append(strong, button);
 
         list.appendChild(li);
     });
