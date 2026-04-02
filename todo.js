@@ -4,7 +4,9 @@ const list = document.querySelector('.list');
 const showAllTasksBtn = document.querySelector('.btnAllActiveTasks');
 const doneBtn = document.querySelector('.btnDoneTasks');
 
-
+window.addEventListener('load', () => {
+    input.focus();
+}); // фокус сразу на инпут
 
 
 const STORAGE_KEY = 'todos-app'; // ключ для отдельного списока
