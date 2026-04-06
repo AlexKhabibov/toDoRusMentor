@@ -4,27 +4,36 @@ const list = document.querySelector('.list');
 const showAllTasksBtn = document.querySelector('.btnAllActiveTasks');
 const doneBtn = document.querySelector('.btnDoneTasks');
 
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
     input.focus();
 }); // фокус сразу на инпут
 
 
-const STORAGE_KEY = 'todos-app'; // ключ для отдельного списока
-let todos = loadTodos(); // список задач
-let currentFilter = "all"; // all | active | done - для статистики по кол-ву задач и тогггла для кнопки "Все задачи/Надо выполнить"
-
-
-render(); // при старте сразу показываем ui
+const STORAGE_KEY = 'todos-app'; // ключ для отдельного списка в LS
 
 // LocalStorage
-function loadTodos() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-}
+const storage = {
+    load(key, defaultValue = []) {
+        try {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : defaultValue;
+        } catch (error) {
+            console.error(`Ошибка загрузки ${key}:`, error);
+            localStorage.removeItem(key);
+            return defaultValue;
+        }
+    },
 
-function saveTodos() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-}
+    save(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (error) {
+            console.error(`Ошибка сохранения ${key}:`, error);
+        }
+    }
+};
+
+let todos = storage.load(STORAGE_KEY); // загружаем список задач
 
 
 // Добавление и сохранение таски
@@ -43,7 +52,7 @@ form.addEventListener('submit', function (e) {
     todos.push(newTodo);
     input.value = '';
 
-    saveTodos();
+    storage.save(STORAGE_KEY, todos);
     render();
 });
 
@@ -57,13 +66,13 @@ function render() {
     const fragment = document.createDocumentFragment(); // хоть и излишне, но ради интереса буду использовать фрагмент (для оптимизации производительности)
 
     filtered.forEach(todo => {
-        const li = document.createElement('li');
-        li.classList.add('task-item');
+        const task = document.createElement('li');
+        task.classList.add('task-item');
 
-        li.dataset.id = todo.id;
+        task.dataset.id = todo.id;
 
         if (todo.completed) {
-            li.classList.add('done');
+            task.classList.add('done');
         }
 
         // так нельзя -> привет от прививки))))
@@ -80,9 +89,9 @@ function render() {
         button.classList.add('delete-btn');
         button.textContent = 'Удалить';
 
-        li.append(strong, button);
+        task.append(strong, button);
 
-        fragment.appendChild(li); // кладем снаала в фрагмент
+        fragment.appendChild(task); // кладем снаала в фрагмент
     });
     list.appendChild(fragment); // а потом из ффрагмента за один раз в список
 
@@ -92,54 +101,58 @@ function render() {
 
 // удаление тасок
 list.addEventListener('click', function (e) {
-    const li = e.target.closest('li');
-    if (!li) return;
+    const todoElement = e.target.closest('li');
+    if (!todoElement) return;
 
-    const id = Number(li.dataset.id);
-    const todo = todos.find(t => t.id === id);
-    if (!todo) return;
+    const todoId = Number(todoElement.dataset.id);
+    const todoItem = todos.find(t => t.id === todoId);
+    if (!todoItem) return;;
 
     if (e.target.classList.contains('delete-btn')) {
-        todos = todos.filter(t => t.id !== id);
-        saveTodos();
-
-        li.remove();
-
-        updateButtons();
+        todos = todos.filter(t => t.id !== todoId);
+        storage.save(STORAGE_KEY, todos);
+        render();
         return;
     }
 
-    todo.completed = !todo.completed;
-    saveTodos();
-
-    li.classList.toggle('done');
-
-    updateButtons();
+    todoItem.completed = !todoItem.completed;
+    storage.save(STORAGE_KEY, todos);
+    render();
 });
 
+// фильтры для статы
+const FILTER_OPTIONS = {
+    ALL: 'all',
+    ACTIVE: 'active',
+    DONE: 'done'
+};
+
+let currentFilter = FILTER_OPTIONS.ALL;
+
+render(); // при старте сразу показываем ui
 
 // фильтрация списка кнопками
 showAllTasksBtn.addEventListener('click', function () {
-    if (currentFilter === 'all') {
-        currentFilter = 'active';
+    if (currentFilter === FILTER_OPTIONS.ALL) {
+        currentFilter = FILTER_OPTIONS.ACTIVE;
     } else {
-        currentFilter = 'all';
+        currentFilter = FILTER_OPTIONS.ALL;
     }
 
     render();
 });
 
 doneBtn.addEventListener('click', function () {
-    currentFilter = 'done';
+    currentFilter = FILTER_OPTIONS.DONE;
     render();
 });
 
 function getFilteredTodos() {
-    if (currentFilter === 'active') {
+    if (currentFilter === FILTER_OPTIONS.ACTIVE) {
         return todos.filter(t => !t.completed);
     }
 
-    if (currentFilter === 'done') {
+    if (currentFilter === FILTER_OPTIONS.DONE) {
         return todos.filter(t => t.completed);
     }
 
@@ -160,7 +173,7 @@ function getStats() {
 function updateButtons() {
     const { total, done, active } = getStats();
 
-    if (currentFilter === 'all') {
+    if (currentFilter === FILTER_OPTIONS.ALL) {
         showAllTasksBtn.textContent = `Все задачи: ${total}`;
     } else {
         showAllTasksBtn.textContent = `Надо выполнить: ${active}`;
@@ -171,7 +184,7 @@ function updateButtons() {
     showAllTasksBtn.classList.remove('active');
     doneBtn.classList.remove('active');
 
-    if (currentFilter === 'done') {
+    if (currentFilter === FILTER_OPTIONS.DONE) {
         doneBtn.classList.add('active');
     } else {
         showAllTasksBtn.classList.add('active');
