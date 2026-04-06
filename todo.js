@@ -57,44 +57,49 @@ form.addEventListener('submit', function (e) {
 });
 
 
+function clearList() { // очистка списка
+    list.innerHTML = '';
+}
+
+function createTodoElement(todo) { // создание одного элемнета списка
+    const task = document.createElement('li');
+    task.classList.add('task-item');
+    task.dataset.id = todo.id;
+
+    if (todo.completed) {
+        task.classList.add('done');
+    }
+
+    const strong = document.createElement('strong');
+    strong.textContent = todo.text;
+
+    const button = document.createElement('button');
+    button.classList.add('delete-btn');
+    button.textContent = 'Удалить';
+
+    task.append(strong, button);
+
+    return task;
+}
+
+function createTodoElements(todos) { // создание списка из фрагмента
+    const fragment = document.createDocumentFragment();
+
+    todos.forEach(todo => {
+        fragment.appendChild(createTodoElement(todo));
+    });
+
+    list.appendChild(fragment);
+}
+
 // render списка тасок
 function render() {
-    list.innerHTML = '';
+
+    clearList();
 
     const filtered = getFilteredTodos();
-
-    const fragment = document.createDocumentFragment(); // хоть и излишне, но ради интереса буду использовать фрагмент (для оптимизации производительности)
-
-    filtered.forEach(todo => {
-        const task = document.createElement('li');
-        task.classList.add('task-item');
-
-        task.dataset.id = todo.id;
-
-        if (todo.completed) {
-            task.classList.add('done');
-        }
-
-        // так нельзя -> привет от прививки))))
-        // li.innerHTML = `
-        //     <strong>${todo.text}</strong>
-        //     <button class="delete-btn">Удалить</button>
-        // `; 
-
-        // безопаснее создать так:
-        const strong = document.createElement('strong');
-        strong.textContent = todo.text;
-
-        const button = document.createElement('button');
-        button.classList.add('delete-btn');
-        button.textContent = 'Удалить';
-
-        task.append(strong, button);
-
-        fragment.appendChild(task); // кладем снаала в фрагмент
-    });
-    list.appendChild(fragment); // а потом из ффрагмента за один раз в список
-
+    createTodoElements(filtered);
+    
     updateButtonsStats(); // обновляем кол-во задач в счетчиках внутри кнопок
 }
 
