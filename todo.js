@@ -95,7 +95,7 @@ function render() {
     });
     list.appendChild(fragment); // а потом из ффрагмента за один раз в список
 
-    updateButtons(); // обновляем кол-во задач в счетчиках внутри кнопок
+    updateButtonsStats(); // обновляем кол-во задач в счетчиках внутри кнопок
 }
 
 
@@ -170,7 +170,7 @@ function getStats() {
 
 
 // кол-во задач в кнопках
-function updateButtons() {
+function updateButtonsStats() {
     const { total, done, active } = getStats();
 
     if (currentFilter === FILTER_OPTIONS.ALL) {
